@@ -18,18 +18,25 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Auth::routes();
+Auth::routes([
+	'register'=>false,
+	'reset'=> false,
+	'verify'=> false,
+]);
 
 // Route::get('/', [App\Http\Controllers\HomeController::class, 'adminIndex'])->name('admin.index');
-Route::get('/', function () {
-	return view('admin.index');
-})->name('admin.index');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['middleware'=>'isAdmin'], function(){
+	Route::get('/welcome', function () {
+		return view('admin.index');
+	})->name('admin.index');
 
-Route::resource('quiz', QuizController::class);
-Route::resource('question', QuestionController::class);
-Route::resource('user', UserController::class);
+	Route::resource('quiz', QuizController::class);
+	Route::resource('question', QuestionController::class);
+	Route::resource('user', UserController::class);
+	
+	Route::get('/quiz/{id}/questions', [QuizController::class, 'questions'])->name('quiz.question');
+});
 
-Route::get('/quiz/{id}/questions', [QuizController::class, 'questions'])->name('quiz.question');
-Route::delete('quiz/{id}/question/delete', [QuestionController::class, 'destroyInQuiz'])->name('destroyInQuiz');
-Route::post('quiz/{id}/question/update', [QuestionController::class, 'updateInQuiz'])->name('updateInQuiz');
+// Route::delete('quiz/{id}/question/delete', [QuestionController::class, 'destroyInQuiz'])->name('destroyInQuiz');
+// Route::post('quiz/{id}/question/update', [QuestionController::class, 'updateInQuiz'])->name('updateInQuiz');

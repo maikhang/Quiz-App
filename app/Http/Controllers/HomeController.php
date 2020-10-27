@@ -18,6 +18,9 @@ class HomeController extends Controller {
 	 * @return \Illuminate\Contracts\Support\Renderable
 	 */
 	public function index() {
+		if(auth()->user()->is_admin==1){
+			return redirect('/welcome');
+		}
 		return view('home');
 	}
 
